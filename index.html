@@ -16,35 +16,36 @@ body {
   background: #333;
   color: #ddd;
   font-family: sans-serif;
-  font-size: 24px;
+  font-size: 20px;
 }
 .box {
   display: flex;
   justify-content: center;
   align-content: center;
   flex-direction: column;
-  width: 500px;
+  width: 17em;
+  max-width: calc(100vw - 20px);
   margin: auto;
 }
 .timer-active {
-  font-size: 4em;
+  font-size: 3.2em;
   text-align: center;
-  padding: 20px;
+  padding: 0.2em;
   font-family: roboto mono, consolas, monospace, mono;
 }
 .start-stop {
-  font-size: 2em;
-  padding: 15px;
+  font-size: 1.8em;
+  padding: 0.2em;
 }
 .reset {
   font-size: 0.66em;
-  margin: 5px 0;
+  margin: 0.2em 0;
 }
 .timer-inactive,
 .timer-total {
   font-size: 0.66em;
   text-align: center;
-  margin-top: 5px;
+  margin-top: 0.3em;
 }
 </style>
 
@@ -64,11 +65,17 @@ body {
 
 <script>
 'use strict';
+// todo:
+// * add a "last break" timer with an option to ping every n minutes
+
 const btnStart = document.querySelector(".start-stop");
 const btnReset = document.querySelector(".reset");
 const timerActive = document.querySelector(".timer-active");
 const timerInactive = document.querySelector(".timer-inactive .timer");
 const timerTotal = document.querySelector(".timer-total .timer");
+
+const isDark = window.matchMedia("(prefers-color-scheme: dark)");
+let previousFavicon = "";
 
 let isActive, tsNow, tsStartActive, tsStartInactive, tsStartTotal, tsLastDiffActive, tsLastDiffInactive;
 function init() {
@@ -169,20 +176,38 @@ function updateTime() {
 updateTime();
 
 function changeFavicon(hours, minutes) {
+  const newFavicon = 
+    (isActive ? "a" : "i") + 
+    (isDark.matches ? "d" : "l") + 
+    hours + minutes;
+
+  if (previousFavicon == newFavicon) return;
+  previousFavicon = newFavicon;
+  
+  let bgColor, fgColor;
+  if (isActive) {
+    bgColor = "#fff";
+    fgColor = "#000";
+  } else {
+    if (isDark.matches) {
+      bgColor = "#a99";
+      fgColor = "#000";
+    } else {
+      bgColor = "#dcc";
+      fgColor = "#888";
+    }
+  }
+
   // https://stackoverflow.com/a/66503749
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.height = 64;
   canvas.width = 64;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   ctx.rect(0, 0, 64, 64);
-  if (isActive) {  
-    ctx.fillStyle = "#fff";
-  } else {
-    ctx.fillStyle = "#a99";
-  }
+  ctx.fillStyle = bgColor;
   ctx.fill();
   ctx.font = "900 34px sans-serif";
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = fgColor;
   ctx.fillText(hours, 8, 30);
   ctx.fillText(minutes, 8, 60);
 
