@@ -181,7 +181,7 @@ function changeFavicon(hours, minutes) {
     (isDark.matches ? "d" : "l") + 
     hours + minutes;
 
-  if (previousFavicon == newFavicon) return;
+  if (previousFavicon === newFavicon) return;
   previousFavicon = newFavicon;
   
   let bgColor, fgColor;
@@ -206,10 +206,11 @@ function changeFavicon(hours, minutes) {
   ctx.rect(0, 0, 64, 64);
   ctx.fillStyle = bgColor;
   ctx.fill();
-  ctx.font = "900 34px sans-serif";
+  ctx.font = '400 37px Nunito, sans-serif';
   ctx.fillStyle = fgColor;
-  ctx.fillText(hours, 8, 30);
-  ctx.fillText(minutes, 8, 60);
+  ctx.textAlign = "center";
+  ctx.fillText(hours, 32, 30);
+  ctx.fillText(minutes, 32, 60);
 
   const link = document.createElement("link");
   const oldLinks = document.querySelectorAll('link[rel="shortcut icon"]');
@@ -219,6 +220,14 @@ function changeFavicon(hours, minutes) {
   link.href = canvas.toDataURL();
   document.head.appendChild(link);
 }
+
+setTimeout(() => {
+  const font = new FontFace("Nunito", "url('https://fonts.gstatic.com/l/font?kit=pe1mMImSLYBIv1o4X1M8ce2xCx3yop4tQpF_MeTm0lfGWVpNn64CL7U8upHZIbMV51Q42ptCp5F5bxqqtQ1yiU4Gfy5nsUcrO8YOmTlp5a6lkEc&skey=60bfdc605ddb00b1&v=v15')");
+  document.fonts.add(font);
+  font.load()
+    .then(() => {previousFavicon = ""})
+    .catch((err) => console.log(err));
+}, 0);
 </script>
 </body>
 </html>
